@@ -1,0 +1,4 @@
+import {db,requireAdmin,sameOrigin,failure} from '@/lib/server';
+import {reminder} from '@/lib/reminders';
+export async function PATCH(req:Request,{params}:{params:Promise<{id:string}>}){try{sameOrigin(req);await requireAdmin();const {id}=await params;const input=await req.json();const value=Object.keys(input).length===1&&typeof input.enabled==='boolean'?input:reminder(input);const {error}=await db().from('reminders').update(value).eq('id',id);if(error)throw error;return Response.json({ok:true});}catch(e){return failure(e);}}
+export async function DELETE(req:Request,{params}:{params:Promise<{id:string}>}){try{sameOrigin(req);await requireAdmin();const {id}=await params;const {error}=await db().from('reminders').delete().eq('id',id);if(error)throw error;return Response.json({ok:true});}catch(e){return failure(e);}}

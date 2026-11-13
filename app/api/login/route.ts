@@ -1,0 +1,2 @@
+import {auth,sameOrigin,failure} from '@/lib/server';
+export async function POST(req:Request){try{sameOrigin(req);const {email,password}=await req.json();if(typeof email!=='string'||typeof password!=='string')throw Error();const client=await auth();const {data,error}=await client.auth.signInWithPassword({email,password});if(error||!data.user||data.user.id!==process.env.ADMIN_USER_ID){await client.auth.signOut();return Response.json({error:'Invalid credentials'},{status:401});}return Response.json({ok:true});}catch(e){return failure(e);}}
